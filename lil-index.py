@@ -4,6 +4,11 @@ import spotifyIDs
 import csv
 import datetime
 import pandas as pd
+import statistics
+from colorama import init, Fore, Back, Style
+
+
+init()
 
 #csv_file = csv.reader(open('spx_1950-2020.csv', "r"), delimiter=',')
 csv_file = pd.read_csv('spx_1950-2020.csv')
@@ -34,13 +39,36 @@ for album in albums:
         albumDict[album['name']] = album['release_date']
         albumDatesSet.add(album['release_date'])
 
-# print(albumDict)
-
 forsight = 5
+
+deltaList = []
+
+# Reverse key/value pair allowing us to find album title by date
+albumDatesTitle = [(a, b) for b, a in albumDict.items()]
 
 for count, row in enumerate(dateColumn):
     for releaseDate in albumDatesSet:
         if row == releaseDate:
             # Found release date. Need to get current value and compare against value x days after
-            delta = closeColumn[count] - closeColumn[count+forsight]
-            print(releaseDate, delta)
+            delta = round(closeColumn[count] - closeColumn[count+forsight], 2)
+            deltaList.append(delta)
+            albumTitle = ''
+            for date in albumDatesTitle:
+                if date[0] == releaseDate:
+                    albumTitle = date[1]
+            print(releaseDate, albumTitle, '', end='')
+            if delta > 0:
+                print(Fore.GREEN + '$', delta, sep='')
+            else:
+                print(Fore.RED + '$', delta, sep='')
+            print(Style.RESET_ALL, end='')
+
+print()
+averageDelta = round(sum(deltaList) / len(deltaList), 2)
+standardDeviation = round(statistics.stdev(deltaList), 2)
+if delta > 0:
+    print(Fore.GREEN + '$', averageDelta, sep='', end='')
+else:
+    print(Fore.RED + '$', averageDelta, sep='', end='')
+print(Style.RESET_ALL, end='')
+print(' ,', standardDeviation)
