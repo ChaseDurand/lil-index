@@ -24,6 +24,10 @@ sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=spotifyIDs.
 
 
 kanyeURI = 'spotify:artist:5K4W6rqBFWDnAN6FQUkS6x'
+lilYachtyURI = 'spotify:artist:6icQOAFXDZKsumw3YXyusw'
+drakeURI = 'spotify:artist:3TVXtAsR1Inumwj472S9r4'
+jDillaURI = 'spotify:artist:0IVcLMMbm05VIjnzPkGCyp'
+
 results = sp.artist_albums(kanyeURI, album_type='album')
 albums = results['items']
 while results['next']:
@@ -50,7 +54,7 @@ for count, row in enumerate(dateColumn):
     for releaseDate in albumDatesSet:
         if row == releaseDate:
             # Found release date. Need to get current value and compare against value x days after
-            delta = round(closeColumn[count] - closeColumn[count+forsight], 2)
+            delta = round(closeColumn[count+forsight] - closeColumn[count], 2)
             deltaList.append(delta)
             albumTitle = ''
             for date in albumDatesTitle:
