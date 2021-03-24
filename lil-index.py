@@ -1,4 +1,5 @@
 import spotipy
+import sys
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotifyIDs
 import csv
@@ -17,17 +18,21 @@ closeColumn = csv_file.Close
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=spotifyIDs.clientID,
                                                            client_secret=spotifyIDs.clientSecret))
 
-#results = sp.search(q='kanye', limit=10)
-# for idx, album in enumerate(results['album']['items']):
-#    print(idx, album['name'])
+# Checks for input argument, default to Kanye if none
+if len(sys.argv) > 1:
+    name = ''.join(sys.argv[1:])
+else:
+    name = 'Kanye West'
+# Search from input and get first result
+resultsArtist = sp.search(q='artist:' + name, type='artist')
+items = resultsArtist['artists']['items']
 
-# TODO add search feature to get Artist URI from search
-kanyeURI = 'spotify:artist:5K4W6rqBFWDnAN6FQUkS6x'
-lilYachtyURI = 'spotify:artist:6icQOAFXDZKsumw3YXyusw'
-drakeURI = 'spotify:artist:3TVXtAsR1Inumwj472S9r4'
-jDillaURI = 'spotify:artist:0IVcLMMbm05VIjnzPkGCyp'
+if len(items) > 0:
+    artist = items[0]
 
-results = sp.artist_albums(kanyeURI, album_type='album')
+print(artist['name'])
+
+results = sp.artist_albums(artist['uri'], album_type='album')
 albums = results['items']
 while results['next']:
     results = sp.next(results)
